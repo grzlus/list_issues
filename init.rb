@@ -14,8 +14,8 @@ Redmine::Plugin.register :list_issues do
         version = @project.versions.where( name: name ).first!
         groupped = rest.group_by { |attr| ((tmp = attr[0...3]) == "max" || tmp == "min") ? tmp : "eq" }
         query = Hash[*(groupped["eq"] || []).flat_map {|q| k,v = q.split("="); [k,v]}]
-        smaller = (groupped['max'] || []).collect { |attr| attr[4..-1].gsub("=", " < ") }.join(" AND ")
-        greater = (groupped['min'] || []).collect { |attr| attr[4..-1].gsub("=", " > ") }.join(" AND ")
+        smaller = (groupped['max'] || []).collect { |attr| attr[4..-1].gsub("=", " <= ") }.join(" AND ")
+        greater = (groupped['min'] || []).collect { |attr| attr[4..-1].gsub("=", " >= ") }.join(" AND ")
 
         content_tag(:ul) do
           version.fixed_issues.where(query).where(smaller).where(greater).collect do |issue|
